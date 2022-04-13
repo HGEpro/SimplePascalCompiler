@@ -116,11 +116,13 @@ class Parser{
                 this->curChar = 0;
             }
         }
-        std::vector<Token> parse(char*, unsigned long long);  
+        std::vector<Token> parse(char*, unsigned long long);
+        Token is_keyword(char* str, unsigned long long size);
         void read_next();
         char peek_next();
         void skip_blank();
         void skip_comment();
         char parse_char();
+        bool match_str(char* expected);
 };
 
