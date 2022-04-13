@@ -18,79 +18,51 @@ bool is_blank(char symbol){
     return false;
 }
 
-Token is_keyword(char* str,unsigned long long size){
+bool Parser::match_str(char* expected){
+    int len = strlen(expected);
+    for (int i=0;i<len;i++){
+        if(curChar != expected[i]){
+            return false;
+        }
+        read_next(); //idk if this is ok as it's consumed...
+    }
+    return true;
+}
+
+Token Parser::is_keyword(char* str, unsigned long long size){
     Token to_return;
     to_return.data = 0;
     switch(size){
         case 9:
             // procedure
-            if (str[0] == 'p' &&
-                    str[1] == 'r' &&
-                    str[2] == 'o' &&
-                    str[3] == 'c' &&
-                    str[4] == 'e' &&
-                    str[5] == 'd' &&
-                    str[6] == 'u' &&
-                    str[7] == 'r' &&
-                    str[8] == 'e'){
+            if (match_str("procedure")){
                 to_return.token = PROCEDURE;
                 break;
             }
 
         case 8:
             // function
-            if (str[0] == 'f' &&
-                    str[1] == 'u' &&
-                    str[2] == 'n' &&
-                    str[3] == 'c' &&
-                    str[4] == 't' &&
-                    str[5] == 'i' &&
-                    str[6] == 'o' &&
-                    str[7] == 'n'){
+            if (match_str("function")){
                 to_return.token = FUNCTION;
                 break;
             }
 
         case 7:
             // program, forward, integer, boolean
-            if (str[0] == 'p' &&
-                    str[1] == 'r' &&
-                    str[2] == 'o' &&
-                    str[3] == 'g' &&
-                    str[4] == 'r' &&
-                    str[5] == 'a' &&
-                    str[6] == 'm'){
+            if (match_str("program")){
                 to_return.token = PROGRAM;
                 break;
             }
-            if (str[0] == 'f' &&
-                    str[1] == 'o' &&
-                    str[2] == 'r' &&
-                    str[3] == 'w' &&
-                    str[4] == 'a' &&
-                    str[5] == 'r' &&
-                    str[6] == 'd'){
+            if (match_str("forward")){
                 to_return.token = FORWARD;
                 break;
             }
-            if (str[0] == 'i' &&
-                    str[1] == 'n' &&
-                    str[2] == 't' &&
-                    str[3] == 'e' &&
-                    str[4] == 'g' &&
-                    str[5] == 'e' &&
-                    str[6] == 'r'){
+            if (match_str("integer")){
                 to_return.token = TYPEDEF;
                 to_return.data = (char*)TYPE_DEFINITIONS::INTEGER;
                 break;
             }
-            if (str[0] == 'b' &&
-                    str[1] == 'o' &&
-                    str[2] == 'o' &&
-                    str[3] == 'l' &&
-                    str[4] == 'e' &&
-                    str[5] == 'a' &&
-                    str[6] == 'n'){
+            if (match_str("boolean")){
                 to_return.token = TYPEDEF;
                 to_return.data = (char*)TYPE_DEFINITIONS::BOOLEAN;
                 break;
@@ -98,100 +70,58 @@ Token is_keyword(char* str,unsigned long long size){
 
         case 6:
             // record
-            if (str[0] == 'r' &&
-                    str[1] == 'e' &&
-                    str[2] == 'c' &&
-                    str[3] == 'o' &&
-                    str[4] == 'r' &&
-                    str[5] == 'd'){
+            if (match_str("record")){
                 to_return.token = RECORD;
                 break;
             }
 
         case 5:
             // const, array, begin, write
-            if (str[0] == 'c' &&
-                    str[1] == 'o' &&
-                    str[2] == 'n' &&
-                    str[3] == 's' &&
-                    str[4] == 't'){
+            if (match_str("const")){
                 to_return.token = CONST;
                 break;
             }
-            if (str[0] == 'a' &&
-                    str[1] == 'r' &&
-                    str[2] == 'r' &&
-                    str[3] == 'a' &&
-                    str[4] == 'y'){
+            if (match_str("array")){
                 to_return.token = ARRAY;
                 break;
             }
-            if (str[0] == 'b' &&
-                    str[1] == 'e' &&
-                    str[2] == 'g' &&
-                    str[3] == 'i' &&
-                    str[4] == 'n'){
+            if (match_str("begin")){
                 to_return.token = BEGIN;
                 break;
             }
-            if (str[0] == 'w' &&
-                    str[1] == 'r' &&
-                    str[2] == 'i' &&
-                    str[3] == 't' &&
-                    str[4] == 'e'){
-                to_return.token = BEGIN;
+            if (match_str("write")){
+                to_return.token = WRITE;
                 break;
             }
             
         case 4:
             // type, then, else, read, with, char, real
-            if (str[0] == 't' &&
-                    str[1] == 'y' &&
-                    str[2] == 'p' &&
-                    str[3] == 'e'){
+            if (match_str("type")){
                 to_return.token = TYPE;
                 break;
             }
-            if (str[0] == 't' &&
-                    str[1] == 'h' &&
-                    str[2] == 'e' &&
-                    str[3] == 'n'){
+            if (match_str("then")){
                 to_return.token = THEN;
                 break;
             }
-            if (str[0] == 'e' &&
-                    str[1] == 'l' &&
-                    str[2] == 's' &&
-                    str[3] == 'e'){
+            if (match_str("else")){
                 to_return.token = ELSE;
                 break;
             }
-            if (str[0] == 'r' &&
-                    str[1] == 'e' &&
-                    str[2] == 'a' &&
-                    str[3] == 'd'){
+            if (match_str("read")){
                 to_return.token = READ;
                 break;
             }
-            if (str[0] == 'w' &&
-                    str[1] == 'i' &&
-                    str[2] == 't' &&
-                    str[3] == 'h'){
+            if (match_str("with")){
                 to_return.token = WITH;
                 break;
             }
-            if (str[0] == 'c' &&
-                    str[1] == 'h' &&
-                    str[2] == 'a' &&
-                    str[3] == 'r'){
+            if (match_str("char")){
                 to_return.token = TYPEDEF;
                 to_return.data = (char*)TYPE_DEFINITIONS::CHAR;
                 break;
             }
-            if (str[0] == 'r' &&
-                    str[1] == 'e' &&
-                    str[2] == 'a' &&
-                    str[3] == 'l'){
+            if (match_str("real")){
                 to_return.token = TYPEDEF;
                 to_return.data = (char*)TYPE_DEFINITIONS::REAL;
                 break;
@@ -199,79 +129,58 @@ Token is_keyword(char* str,unsigned long long size){
         
         case 3:
             // end, var, set, not, and, mod, div, for
-            if (str[0] == 'e' &&
-                    str[1] == 'n' &&
-                    str[2] == 'd'){
+            if (match_str("end")){
                 to_return.token = END;
                 break;
             }
-            if (str[0] == 'v' &&
-                    str[1] == 'a' &&
-                    str[2] == 'r'){
+            if (match_str("var")){
                 to_return.token = VAR;
                 break;
             }
-            if (str[0] == 's' &&
-                    str[1] == 'e' &&
-                    str[2] == 't'){
+            if (match_str("set")){
                 to_return.token = SET;
                 break;
             }
-            if (str[0] == 'n' &&
-                    str[1] == 'o' &&
-                    str[2] == 't'){
-                to_return.token = END;
+            if (match_str("not")){
+                to_return.token = NOT;
                 break;
             }
-            if (str[0] == 'a' &&
-                    str[1] == 'n' &&
-                    str[2] == 'd'){
+            if (match_str("and")){
                 to_return.token = AND;
                 break;
             }
-            if (str[0] == 'm' &&
-                    str[1] == 'o' &&
-                    str[2] == 'd'){
+            if (match_str("mod")){
                 to_return.token = MOD;
                 break;
             }
-            if (str[0] == 'd' &&
-                    str[1] == 'i' &&
-                    str[2] == 'v'){
+            if (match_str("div")){
                 to_return.token = DIV;
                 break;
             }
-            if (str[0] == 'f' &&
-                    str[1] == 'o' &&
-                    str[2] == 'r'){
+            if (match_str("for")){
                 to_return.token = FOR;
                 break;
             }
 
         case 2:
             // of, if, in, or, to
-            if (str[0] == 'o' &&
-                    str[1] == 'f'){
+            if (match_str("of")){
                 to_return.token = OF;
                 break;
             }
-            if (str[0] == 'i' &&
-                    str[1] == 'f'){
+            if (match_str("if")){
                 to_return.token = IF;
                 break;
             }
-            if (str[0] == 'i' &&
-                    str[1] == 'n'){
+            if (match_str("in")){
                 to_return.token = IN;
                 break;
             }
-            if (str[0] == 'o' &&
-                    str[1] == 'r'){
+            if (match_str("or")){
                 to_return.token = OR;
                 break;
             }
-            if (str[0] == 't' &&
-                    str[1] == 'o'){
+            if (match_str("to")){
                 to_return.token = TO;
                 break;
             }
@@ -488,3 +397,4 @@ std::vector<Token> Parser::parse(char*, unsigned long long){
         }
     }
 }
+       
